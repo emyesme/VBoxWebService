@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 
 #Ver la lista de máquinas virtuales en el host (VBoxManage list vms)
-@app.route('/listarVBox')
+@app.route('/listarVBox', methods=['GET'])
 def listarMaquinas():
 	salida = subprocess.check_output(['vboxmanage', 'list' , 'vms'])
 	lista_maquinas = salida.splitlines()
@@ -15,7 +15,7 @@ def listarMaquinas():
 
 
 #Ver la lista de máquinas en ejecución en el host (VBoxManage list runningvms)
-@app.route('/listarVBoxEjecucion')
+@app.route('/listarVBoxEjecucion', methods=['GET'])
 def corriendo():
 	salida = subprocess.check_output(['vboxmanage', 'list' , 'runningvms'])
 	lista_maquinas = salida.splitlines()
@@ -25,15 +25,15 @@ def corriendo():
 #Dada una máquina virtual
 
 #Ver sus características (VBoxManage showvminfo)
-@app.route('/VBox/<string:vBox>')
+@app.route('/VBox/<string:vBox>', methods=['GET'])
 def info(vBox):
-	salida = subprocess.check_output(['vboxmanage', 'showvminfo', vm ])
+	salida = subprocess.check_output(['vboxmanage', 'showvminfo', vBox ])
 	lista_info = salida.splitlines()
 	return jsonify({'VBox': lista_info})
 
 
 #Ver la RAM asignada a la máquina virtual
-@app.route('/VBox/ram/<string:vBox>')
+@app.route('/VBox/ram/<string:vBox>', methods=['GET'])
 def ram(vBox):
 	vBox_info = subprocess.Popen(['vboxmanage', 'showvminfo', vBox ], stdout = subprocess.PIPE)
 	salida = subprocess.Popen(['grep', 'Memory'], stdin = vBox_info.stdout, stdout = subprocess.PIPE)
@@ -43,7 +43,7 @@ def ram(vBox):
 
 
 #Ver el número de procesadores asignados a la máquina virtu
-@app.route('/VBox/cpus/<string:vBox>')
+@app.route('/VBox/cpus/<string:vBox>', methods=['GET'])
 def cpus(vBox):
 	vBox_info = subprocess.Popen(['vboxmanage', 'showvminfo', vBox ], stdout = subprocess.PIPE)
 	salida = subprocess.Popen(['grep', 'Number of CPUs'], stdin = vBox_info.stdout, stdout = subprocess.PIPE)
@@ -53,7 +53,7 @@ def cpus(vBox):
 
 
 #Brindar el número de tarjetas de red conectadas a una máquina virtual
-@app.route('/VBox/nic/<string:vBox>')
+@app.route('/VBox/nic/<string:vBox>', methods=['GET'])
 def nic(vBox):
 	vBox_info = subprocess.Popen(['vboxmanage', 'showvminfo', vBox ], stdout = subprocess.PIPE)
 	controladores_red = subprocess.Popen(['grep', 'NIC'], stdin = vBox_info.stdout, stdout = subprocess.PIPE)
@@ -64,25 +64,25 @@ def nic(vBox):
 
 
 #Modificar el número de CPUs
-@app.route('/VBox/modificarCpus/<string:vBox>/<string:cpu>')
+@app.route('/VBox/modificarCpus/<string:vBox>/<string:cpu>', methods=['GET'])
 def modificarCpus(vBox, cpu):
 	subprocess.run(['vboxmanage', 'modifyvm', vBox, '--cpus' , cpu ])
-	return jsonify ({'VBox': "Se modificó el número de CPUs en la maquina virtual: " + vBox + " a " + cpu})
+	return jsonify ({'VBox': "Se modifico el número de CPUs en la maquina virtual: " + vBox + " a " + cpu})
 
 #Modificar la RAM asignada a la máquina virtual
-@app.route('/VBox/modificarRam/<string:vBox>/<string:ram>')
+@app.route('/VBox/modificarRam/<string:vBox>/<string:ram>', methods=['GET'])
 def modificarRam(vBox, ram):
 	subprocess.run(['vboxmanage', 'modifyvm', vBox, '--memory' , ram ])
-	return jsonify ({'VBox': "Se modificó la RAM asignada en la maquina virtual: " + vBox + " a " + ram + "MB"})
+	return jsonify ({'VBox': "Se modifico la RAM asignada en la maquina virtual: " + vBox + " a " + ram + "MB"})
 
 #Modificar la cantidad de porcentaje del procesador que se le asigna a una máquina virtual
-@app.route('/VBox/modificarPorcentajeCpu/<string:vBox>/<string:porcentaje>')
+@app.route('/VBox/modificarPorcentajeCpu/<string:vBox>/<string:porcentaje>', methods=['GET'])
 def modificarPorcentajeCpu(vBox, porcentaje):
 	if(int(porcentaje)>0 and int(porcentaje)<=100):
 		subprocess.run(['vboxmanage', 'modifyvm', vBox, '--cpuexecutioncap' , porcentaje ])
-		return jsonify ({'VBox': "Se modificó el porcentaje del procesador que se asigna a la maquina: " + vBox + " a " + porcentaje + "%"})
+		return jsonify ({'VBox': "Se modifico el porcentaje del procesador que se asigna a la maquina: " + vBox + " a " + porcentaje + "%"})
 	else:
-		return jsonify ({'VBox': "No se modificó el porcentaje del procesador, debe asignarse un porcentaje entre cero y cien"})
+		return jsonify ({'VBox': "No se modifico el porcentaje del procesador, debe asignarse un porcentaje entre cero y cien"})
 
 
 @app.errorhandler(404)
