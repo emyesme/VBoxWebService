@@ -67,20 +67,20 @@ def nic(vBox):
 @app.route('/VBox/modificarCpus/<string:vBox>/<string:cpu>', methods=['GET'])
 def modificarCpus(vBox, cpu):
 	subprocess.run(['vboxmanage', 'modifyvm', vBox, '--cpus' , cpu ])
-	return jsonify ({'VBox': "Se modifico el número de CPUs en la maquina virtual: " + vBox + " a " + cpu})
+	return jsonify ({'VBox': "Si la maquina no se encontraba corriendo se modifico el número de CPUs en la maquina virtual: " + vBox + " a " + cpu})
 
 #Modificar la RAM asignada a la máquina virtual
 @app.route('/VBox/modificarRam/<string:vBox>/<string:ram>', methods=['GET'])
 def modificarRam(vBox, ram):
 	subprocess.run(['vboxmanage', 'modifyvm', vBox, '--memory' , ram ])
-	return jsonify ({'VBox': "Se modifico la RAM asignada en la maquina virtual: " + vBox + " a " + ram + "MB"})
+	return jsonify ({'VBox': "Si la maquina no se encontraba corriendo se modifico la RAM asignada en la maquina virtual: " + vBox + " a " + ram + "MB"})
 
 #Modificar la cantidad de porcentaje del procesador que se le asigna a una máquina virtual
 @app.route('/VBox/modificarPorcentajeCpu/<string:vBox>/<string:porcentaje>', methods=['GET'])
 def modificarPorcentajeCpu(vBox, porcentaje):
 	if(int(porcentaje)>0 and int(porcentaje)<=100):
 		subprocess.run(['vboxmanage', 'modifyvm', vBox, '--cpuexecutioncap' , porcentaje ])
-		return jsonify ({'VBox': "Se modifico el porcentaje del procesador que se asigna a la maquina: " + vBox + " a " + porcentaje + "%"})
+		return jsonify ({'VBox': "Si la maquina no se encontraba corriendo se modifico el porcentaje del procesador que se asigna a la maquina: " + vBox + " a " + porcentaje + "%"})
 	else:
 		return jsonify ({'VBox': "No se modifico el porcentaje del procesador, debe asignarse un porcentaje entre cero y cien"})
 
